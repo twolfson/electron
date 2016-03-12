@@ -194,7 +194,7 @@ describe('chromium feature', function() {
       b = window.open("file://" + fixtures + "/pages/window-open-size.html", '', "show=no,width=" + size.width + ",height=" + size.height);
     });
 
-    it.only('defines a window.location getter', function(done) {
+    it('defines a window.location getter', function(done) {
       var b, targetURL;
       targetURL = "file://" + fixtures + "/pages/window-opener-postMessage.html";
       listener = function(event) {
@@ -204,6 +204,22 @@ describe('chromium feature', function() {
       };
       window.addEventListener('message', listener);
       b = window.open(targetURL);
+    });
+
+    it.only('defines a window.location setter', function(done) {
+      // Set a low timeout as this is all local
+      this.timeout(10000);
+
+      var b, targetURL;
+      targetURL = "file://" + fixtures + "/pages/window-opener-postMessage.html";
+      listener = function(event) {
+        b.close();
+        done();
+      };
+      window.addEventListener('message', listener);
+      // Open a page with no postMessage responder
+      b = window.open("about:blank");
+      b.location = targetURL;
     });
   });
 
