@@ -194,10 +194,16 @@ describe('chromium feature', function() {
       b = window.open("file://" + fixtures + "/pages/window-open-size.html", '', "show=no,width=" + size.width + ",height=" + size.height);
     });
 
-    it.only('defines a window.location getter', function() {
-      var b;
-      b = window.open("about:blank");
-      assert.equal(b.location, 'wat');
+    it.only('defines a window.location getter', function(done) {
+      var b, targetURL;
+      targetURL = "file://" + fixtures + "/pages/window-opener-postMessage.html";
+      listener = function(event) {
+        assert.equal(b.location, targetURL);
+        b.close();
+        done();
+      };
+      window.addEventListener('message', listener);
+      b = window.open(targetURL);
     });
   });
 
