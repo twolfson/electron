@@ -193,6 +193,12 @@ describe('chromium feature', function() {
       window.addEventListener('message', listener);
       b = window.open("file://" + fixtures + "/pages/window-open-size.html", '', "show=no,width=" + size.width + ",height=" + size.height);
     });
+
+    it.only('defines a window.location getter', function() {
+      var b;
+      b = window.open("about:blank");
+      assert.equal(b.location, 'wat');
+    });
   });
 
   describe('window.opener', function() {
