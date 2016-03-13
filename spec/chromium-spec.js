@@ -206,12 +206,8 @@ describe('chromium feature', function() {
     });
 
     it('defines a window.location setter', function(done) {
-      // Set a low timeout as this is all local
-      this.timeout(10000);
-
-      var b;
-
       // Load a page that definitely won't redirect
+      var b;
       b = window.open("about:blank");
       BrowserWindow.fromId(b.guestId).webContents.once('did-finish-load', function() {
         // When it loads, redirect
