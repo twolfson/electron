@@ -196,30 +196,32 @@ describe('chromium feature', function() {
 
     it('defines a window.location getter', function(done) {
       var b, targetURL;
-      targetURL = "file://" + fixtures + "/pages/window-opener-postMessage.html";
-      listener = function(event) {
+      targetURL = "file://" + fixtures + "/pages/base-page.html";
+      b = window.open(targetURL);
+      BrowserWindow.fromId(b.guestId).webContents.once('did-finish-load', function() {
         assert.equal(b.location, targetURL);
         b.close();
         done();
-      };
-      window.addEventListener('message', listener);
-      b = window.open(targetURL);
+      });
     });
 
-    it.only('defines a window.location setter', function(done) {
+    it('defines a window.location setter', function(done) {
       // Set a low timeout as this is all local
       this.timeout(10000);
 
-      var b, targetURL;
-      targetURL = "file://" + fixtures + "/pages/window-opener-postMessage.html";
-      listener = function(event) {
-        b.close();
-        done();
-      };
-      window.addEventListener('message', listener);
-      // Open a page with no postMessage responder
+      var b;
+
+      // Load a page that definitely won't redirect
       b = window.open("about:blank");
-      b.location = targetURL;
+      BrowserWindow.fromId(b.guestId).webContents.once('did-finish-load', function() {
+        // When it loads, redirect
+        b.location = "file://" + fixtures + "/pages/base-page.html";
+        BrowserWindow.fromId(b.guestId).webContents.once('did-finish-load', function() {
+          // After our second redirect, cleanup and callback
+          b.close();
+          done();
+        });
+      });
     });
   });
 
